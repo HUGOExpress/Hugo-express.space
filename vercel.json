@@ -3,20 +3,21 @@
   "builds": [
     {
       "src": "hugoexpressapi.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": { "zeroConfig": true }
     }
   ],
   "routes": [
     {
-      "src": "^/generate$",
+      "src": "/generate",
       "dest": "/hugoexpressapi.js"
     },
     {
-      "src": "^/api/(.*)$",
+      "src": "/api/(.*)",
       "dest": "/hugoexpressapi.js"
     },
     {
-      "src": "^/01/(.*)/21/(.*)$",
+      "src": "/01/(.*)/21/(.*)",
       "dest": "/hugoexpressapi.js"
     }
   ]
