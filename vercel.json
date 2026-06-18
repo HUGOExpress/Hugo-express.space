@@ -1,17 +1,23 @@
 {
   "version": 2,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/:path*",
-      "destination": "/hugoexpressapi.js"
+      "src": "hugoexpressapi.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/generate",
+      "dest": "/hugoexpressapi.js"
     },
     {
-      "source": "/generate",
-      "destination": "/hugoexpressapi.js"
+      "src": "/api/(.*)",
+      "dest": "/hugoexpressapi.js"
     },
     {
-      "source": "/01/:upc/21/:id",
-      "destination": "/hugoexpressapi.js"
+      "src": "/01/(.*)/21/(.*)",
+      "dest": "/hugoexpressapi.js"
     }
   ]
 }
