@@ -1,15 +1,8 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "hugoexpressapi.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "hugoexpressapi.js"
+      "source": "/(.*)",
+      "destination": "/hugoexpressapi.js"
     }
   ]
 }
