@@ -88,7 +88,7 @@ app.get('/api/gen', async (req, res) => {
               </body>`);
 });
 // SERVE THE VISUAL GENERATOR DASHBOARD
-app.get('/generate', (req, res) => {
+app.get('generate', (req, res) => {
     res.send(`
         <!DOCTYPE html>
         <html>
