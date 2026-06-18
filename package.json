@@ -1,14 +1,10 @@
 {
-  "name": "hugo-express",
+  "name": "hugo-express-api",
   "version": "1.0.0",
-  "description": "Blockchain-verified logistics tracking",
-  "main": "api/index.js",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'Build complete'"
-  },
+  "description": "Backend routing engine for Hugo Express",
+  "main": "api/hugoexpressapi.js",
   "dependencies": {
-    "express": "^4.18.2",
+    "express": "^4.19.2",
     "qrcode": "^1.5.3"
   }
 }
