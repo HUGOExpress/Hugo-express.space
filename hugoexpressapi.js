@@ -87,5 +87,22 @@ app.get('/api/gen', async (req, res) => {
                 <p>Link: ${url}</p>
               </body>`);
 });
-
+// NEW CLEAN GENERATOR ENDPOINT FOR HUGO EMBEDS
+app.get('/api/qr-image', async (req, res) => {
+    const { upc, id } = req.query;
+    if(!upc || !id) return res.status(400).send("Missing upc or id params.");
+    
+    const url = `https://${req.headers.host}/01/${upc}/21/${id}`;
+    
+    try {
+        // This generates the raw image buffer instead of a base64 string
+        const qrBuffer = await QRCode.toBuffer(url, { type: 'png', width: 300 });
+        
+        // Tell the browser this is a PNG image, not HTML
+        res.setHeader('Content-Type', 'image/png');
+        res.send(qrBuffer);
+    } catch (err) {
+        res.status(500).send("Error generating QR code");
+    }
+});
 module.exports = app;
