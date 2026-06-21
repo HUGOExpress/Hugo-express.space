@@ -87,10 +87,10 @@ app.get('/api/gen', async (req, res) => {
                 <p>Link: ${url}</p>
               </body>`);
 });
-// SERVE THE VISUAL GENERATOR DASHBOARD (CATCH-ALL TYPO PROOF)
+// SERVE THE VISUAL GENERATOR DASHBOARD (VERCEL COMPATIBLE)
 app.get('*', (req, res, next) => {
-    // If the link contains the word "generate", instantly show the dashboard
-    if (req.path.includes('generate')) {
+    // Check if the browser path or our custom query contains "generate"
+    if (req.path.includes('generate') || req.query.path === 'generate') {
         return res.send(`
             <!DOCTYPE html>
             <html>
@@ -137,7 +137,7 @@ app.get('*', (req, res, next) => {
                     const host = window.location.host;
                     const rawTrackingUrl = 'https://' + host + '/01/' + upc + '/21/' + id;
                     
-                    document.getElementById('qrResult').src = '/api/qr-image?upc=' + upc + '&id=' + id;
+                    document.getElementById('qrResult').src = '/api/hugoexpressapi?upc=' + upc + '&id=' + id;
                     document.getElementById('urlResult').innerText = rawTrackingUrl;
                     document.getElementById('resultContainer').classList.remove('hidden');
                 });
@@ -146,27 +146,12 @@ app.get('*', (req, res, next) => {
             </html>
         `);
     }
-    next(); // Pass along if it's not a generate request
-});
-
-
-
-// NEW CLEAN GENERATOR ENDPOINT FOR HUGO EMBEDS
-app.get('/api/qr-image', async (req, res) => {
-    const { upc, id } = req.query;
-    if(!upc || !id) return res.status(400).send("Missing upc or id params.");
     
-    const url = `https://${req.headers.host}/01/${upc}/21/${id}`;
-    
-    try {
-        // This generates the raw image buffer instead of a base64 string
-        const qrBuffer = await QRCode.toBuffer(url, { type: 'png', width: 300 });
-        
-        // Tell the browser this is a PNG image, not HTML
-        res.setHeader('Content-Type', 'image/png');
-        res.send(qrBuffer);
-    } catch (err) {
-        res.status(500).send("Error generating QR code");
+    // Fallback for barcode dynamic routing strings if path is stripped by Vercel rewrites
+    if (req.path.includes('/01/') || (req.url && req.url.includes('/01/'))) {
+         return next();
     }
+    
+    // Default response if it hits the root engine directly
+    res.status(200).json({ status: "HUGO Express API Engine Active" });
 });
-module.exports = app;
