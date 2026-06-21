@@ -87,6 +87,32 @@ app.get('/api/gen', async (req, res) => {
                 <p>Link: ${url}</p>
               </body>`);
 });
+
+// Support requests sent to the function filename with query params, e.g. /api/hugoexpressapi?upc=...&id=...
+app.get('/api/hugoexpressapi', async (req, res, next) => {
+    const { upc, id, path } = req.query;
+
+    // If caller is requesting a QR generation using upc & id, return the QR image (used by the front-end generator)
+    if (upc && id) {
+        try {
+            const url = `https://${req.headers.host}/01/${upc}/21/${id}`;
+            const qrImage = await QRCode.toDataURL(url);
+            // Return an inline image so the front-end can set it as an <img> src
+            const html = `<img src="${qrImage}" alt="QR Code"/>`;
+            return res.send(html);
+        } catch (err) {
+            console.error('QR generation failed', err);
+            return res.status(500).send('QR generation error');
+        }
+    }
+
+    // If rewrites pass ?path=generate, let the wildcard handler render the generator UI
+    if (path === 'generate') return next();
+
+    // Otherwise, default to JSON engine response
+    res.status(200).json({ status: "HUGO Express API Engine Active" });
+});
+
 // SERVE THE VISUAL GENERATOR DASHBOARD (VERCEL COMPATIBLE)
 app.get('*', (req, res, next) => {
     // Check if the browser path or our custom query contains "generate"
@@ -108,13 +134,13 @@ app.get('*', (req, res, next) => {
                     <form id="qrForm" class="space-y-4">
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Product UPC</label>
-                            <input type="text" id="upcInput" placeholder="e.g., 123456789012" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-purple-500 text-white" required>
+                            <input type="text" id="upcInput" placeholder="e.g., 123456789012" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-purple-500">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Ledger Tracking ID (Hugo Hash)</label>
-                            <input type="text" id="idInput" placeholder="e.g., A1B2C3D4E5F6" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-purple-500 text-white" required>
+                            <input type="text" id="idInput" placeholder="e.g., A1B2C3D4E5F6" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-purple-500">
                         </div>
-                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold rounded-xl transition duration-200 shadow-lg mt-2">
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold rounded-xl transition duration-150">
                             Generate QR Code
                         </button>
                     </form>
@@ -137,7 +163,7 @@ app.get('*', (req, res, next) => {
                     const host = window.location.host;
                     const rawTrackingUrl = 'https://' + host + '/01/' + upc + '/21/' + id;
                     
-                    document.getElementById('qrResult').src = '/api/hugoexpressapi?upc=' + upc + '&id=' + id;
+                    document.getElementById('qrResult').src = '/api/hugoexpressapi?upc=' + encodeURIComponent(upc) + '&id=' + encodeURIComponent(id);
                     document.getElementById('urlResult').innerText = rawTrackingUrl;
                     document.getElementById('resultContainer').classList.remove('hidden');
                 });
@@ -155,4 +181,5 @@ app.get('*', (req, res, next) => {
     // Default response if it hits the root engine directly
     res.status(200).json({ status: "HUGO Express API Engine Active" });
 });
-module.export=app;
+
+module.exports = app;
