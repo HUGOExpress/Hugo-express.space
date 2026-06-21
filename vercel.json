@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/generate",
-      "destination": "/api/hugoexpressapi"
+      "destination": "/api/hugoexpressapi?path=generate"
     },
     {
       "source": "/01/:upc/21/:id",
