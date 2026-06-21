@@ -182,4 +182,5 @@ app.get('*', (req, res, next) => {
     res.status(200).json({ status: "HUGO Express API Engine Active" });
 });
 
-module.exports = app;
+// Export a lightweight wrapper so Vercel's serverless runtime receives a function handler
+module.exports = (req, res) => app(req, res);
