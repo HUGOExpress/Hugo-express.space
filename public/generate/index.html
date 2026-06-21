@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HUGO Express — Label Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-6 font-sans">
+  <div class="max-w-md w-full bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-700">
+    <h1 class="text-2xl font-extrabold mb-2">HUGO Express — Label Generator</h1>
+    <p class="text-xs text-gray-400 mb-6 uppercase tracking-wider">Create dynamic blockchain QR routing links</p>
+
+    <form id="qrForm" class="space-y-4">
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Product UPC</label>
+        <input type="text" id="upcInput" placeholder="e.g., 123456789012" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-purple-500" required>
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Ledger Tracking ID (Hugo Hash)</label>
+        <input type="text" id="idInput" placeholder="e.g., A1B2C3D4E5F6" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-purple-500" required>
+      </div>
+
+      <button type="submit" class="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold rounded-xl transition duration-150">Generate QR Code</button>
+    </form>
+
+    <div id="resultContainer" class="hidden mt-8 pt-6 border-t border-gray-700 text-center">
+      <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Your Generated Label:</h3>
+      <div class="bg-white p-4 rounded-2xl inline-block shadow-inner">
+        <img id="qrResult" src="" alt="Generated QR" class="mx-auto max-w-[200px]">
+      </div>
+      <p id="urlResult" class="text-[10px] font-mono text-purple-400 mt-4 break-all bg-gray-900 p-3 rounded-lg border border-gray-700 leading-tight"></p>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    const form = document.getElementById('qrForm');
+    const resultContainer = document.getElementById('resultContainer');
+    const qrResult = document.getElementById('qrResult');
+    const urlResult = document.getElementById('urlResult');
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const upc = document.getElementById('upcInput').value.trim();
+      const id = document.getElementById('idInput').value.trim();
+      if(!upc || !id) return;
+
+      // Use the API endpoint for generating the QR image
+      const apiSrc = '/api/hugoexpressapi?upc=' + encodeURIComponent(upc) + '&id=' + encodeURIComponent(id);
+      qrResult.src = apiSrc;
+
+      // Show the tracking URL for printing/labeling
+      const trackingUrl = window.location.protocol + '//' + window.location.host + '/01/' + encodeURIComponent(upc) + '/21/' + encodeURIComponent(id);
+      urlResult.textContent = trackingUrl;
+
+      resultContainer.classList.remove('hidden');
+    });
+  })();
+  </script>
+</body>
+</html>
