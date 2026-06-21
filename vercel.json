@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/generate",
+      "destination": "/api/hugoexpressapi"
+    },
+    {
+      "source": "/01/:upc/21/:id",
+      "destination": "/api/hugoexpressapi"
+    }
+  ]
+}
