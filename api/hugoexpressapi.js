@@ -155,3 +155,4 @@ app.get('*', (req, res, next) => {
     // Default response if it hits the root engine directly
     res.status(200).json({ status: "HUGO Express API Engine Active" });
 });
+module.export=app;
