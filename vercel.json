@@ -12,8 +12,9 @@
       "destination": "/api/hugoexpressapi?path=generate"
     },
     {
-      "source": "/01/:upc/21/:id",
+      "source": "/01/:upc/21/:hugoHash",
       "destination": "/api/hugoexpressapi"
     }
   ]
 }
+
