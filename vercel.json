@@ -8,13 +8,13 @@
   ],
   "rewrites": [
     {
-      "source": "/generate",
-      "destination": "/api/hugoexpressapi?path=generate"
-    },
+      "source": "/(.*)",
+      "destination": "/api/hugoexpressapi"
+    
     {
       "source": "/01/:upc/21/:hugoHash",
       "destination": "/api/hugoexpressapi"
-    }
+    
   ]
 }
 
